@@ -1,16 +1,15 @@
 import joblib
 import pandas as pd
-
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve, auc
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.over_sampling import SMOTE
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
 
 df = pd.read_csv("fake_job_postings.csv")
 df['fraudulent'] = df['fraudulent'].astype(int)
@@ -21,7 +20,6 @@ cat_cols = [
     'required_experience','required_education',
     'industry','function'
 ]
-
 binary_cols = ['telecommuting', 'has_company_logo', 'has_questions']
 
 df[text_cols] = df[text_cols].fillna('')
@@ -107,9 +105,15 @@ print("Test ROC-AUC:", roc_auc_score(y_te, test_probs))
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_te, y_test_pred))
 
-joblib.dump(best_model, "fakejob.joblib")
-print("\nModel saved successfully")
+clean_pipeline = Pipeline([
+    ('preprocess', best_model.named_steps['preprocess']),
+    ('clf', best_model.named_steps['clf'])
+])
 
+joblib.dump(clean_pipeline, "fakejob.joblib")
+print("\nDeployment-ready model saved successfully")
+
+# ROC Curve
 fpr, tpr, thresholds = roc_curve(y_te, test_probs)
 roc_auc = auc(fpr, tpr)
 

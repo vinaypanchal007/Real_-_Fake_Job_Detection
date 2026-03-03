@@ -32,7 +32,6 @@ company_profile = st.text_area("Company Profile")
 description = st.text_area("Job Description")
 requirements = st.text_area("Requirements")
 benefits = st.text_area("Benefits")
-
 location = st.text_input("Location")
 department = st.text_input("Department")
 employment_type = st.text_input("Employment Type")
@@ -40,13 +39,10 @@ required_experience = st.text_input("Required Experience")
 required_education = st.text_input("Required Education")
 industry = st.text_input("Industry")
 function = st.text_input("Function")
-
 salary_range = st.text_input("Salary Range (e.g. 50000-70000)")
-
 telecommuting = st.selectbox("Telecommuting Available?", ["No", "Yes"])
 has_company_logo = st.selectbox("Has Company Logo?", ["No", "Yes"])
 has_questions = st.selectbox("Has Screening Questions?", ["No", "Yes"])
-
 telecommuting = 1 if telecommuting == "Yes" else 0
 has_company_logo = 1 if has_company_logo == "Yes" else 0
 has_questions = 1 if has_questions == "Yes" else 0
@@ -73,7 +69,7 @@ if st.button("Predict"):
     if salary_range:
         try:
             salary_min = float(salary_range.split("-")[0])
-        except ValueError:
+        except:
             salary_min = 0
 
     input_df = pd.DataFrame([{
@@ -97,10 +93,10 @@ if st.button("Predict"):
     st.markdown("### Prediction Result")
 
     if result == "Fake Job":
-        st.error("FAKE JOB POSTING")
+        st.error(f"FAKE JOB POSTING")
     elif result == "Real Job":
-        st.success("REAL JOB POSTING")
+        st.success(f"REAL JOB POSTING")
     else:
-        st.warning("UNSURE — NEEDS MANUAL REVIEW")
+        st.warning(f"UNSURE — NEEDS MANUAL REVIEW")
 
     st.caption("Prediction generated using model with text, metadata, salary, and credibility signals.")
