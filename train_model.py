@@ -8,7 +8,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import *
 import joblib
 
-frj = pd.read_csv("./Dataset/fake_real_job.csv")
+frj = pd.read_csv("./Dataset/fake_real_job.csv", low_memory=False)
 
 frj = frj.drop(columns=['job_id'], errors='ignore')
 
@@ -25,7 +25,7 @@ split_salary = frj['salary_range'].str.split('-', expand=True)
 frj['salary_min'] = pd.to_numeric(split_salary[0], errors='coerce').fillna(0).astype(int)
 frj['salary_max'] = pd.to_numeric(split_salary[1], errors='coerce').fillna(frj['salary_min']).astype(int)
 
-frj['exp_req(yrs)'] = frj['required_experience'].str.extract('(\d+)')
+frj['exp_req(yrs)'] = frj['required_experience'].str.extract(r'(\d+)')
 frj['exp_req(yrs)'] = frj['exp_req(yrs)'].fillna(0).astype(int)
 
 frj = frj[[
@@ -53,10 +53,7 @@ num_cols = ['salary_min','salary_max','exp_req(yrs)','telecommuting']
 
 preprocessor = ColumnTransformer(
     transformers=[
-        ('text', TfidfVectorizer(stop_words='english',
-                                 max_features=30000,
-                                 ngram_range=(1,2),
-                                 min_df=2), text_col),
+        ('text', TfidfVectorizer(stop_words='english', max_features=30000, ngram_range=(1,2), min_df=2), text_col),
         ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols),
         ('num', 'passthrough', num_cols)
     ]

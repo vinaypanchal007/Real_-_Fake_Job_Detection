@@ -107,8 +107,6 @@ if st.button("Predict Job Authenticity"):
 
     fake_probability = model.predict_proba(input_df)[0][1]
 
-    st.write(f"Fake Probability: {fake_probability:.2f}")
-
     if fake_probability > 0.6:
         st.error("Fake Job Posting")
 
