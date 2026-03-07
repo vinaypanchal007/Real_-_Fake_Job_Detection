@@ -2,7 +2,7 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-MODEL_PATH = "./Joblib_Model/fakejob_pipeline.joblib"
+MODEL_PATH = "./fakejob_pipeline.joblib"
 
 @st.cache_resource
 def load_model():
@@ -114,4 +114,5 @@ if st.button("Predict Job Authenticity"):
         st.success("Real Job Posting")
 
     else:
+
         st.warning("Uncertain Prediction")
