@@ -33,10 +33,12 @@ department = st.text_input("Department")
 
 employment_type = st.selectbox(
     "Employment Type",
-    ["Full-time", 
-     "Part-time", 
-     "Contract", 
-     "Temporary"]
+    [
+        "Full-time",
+        "Part-time",
+        "Contract",
+        "Temporary"
+    ]
 )
 
 required_education = st.selectbox(
@@ -63,6 +65,7 @@ if telecommuting == "Yes":
 else:
     telecommuting = 0
 
+
 if st.button("Predict Job Authenticity"):
 
     combined_text = " ".join([
@@ -84,6 +87,14 @@ if st.button("Predict Job Authenticity"):
         st.warning("Please provide more detailed job information.")
         st.stop()
 
+    salary_min = int(salary_min)
+    salary_max = int(salary_max)
+    experience = int(experience)
+
+    if salary_max <= salary_min:
+        st.warning("Maximum salary should be greater than minimum salary.")
+        st.stop()
+
     input_df = pd.DataFrame({
         "combined_text": [combined_text],
         "employment_type": [employment_type],
@@ -96,9 +107,13 @@ if st.button("Predict Job Authenticity"):
 
     fake_probability = model.predict_proba(input_df)[0][1]
 
+    st.write(f"Fake Probability: {fake_probability:.2f}")
+
     if fake_probability > 0.6:
-        st.error(f"Fake Job Posting")
+        st.error("Fake Job Posting")
+
     elif fake_probability < 0.4:
-        st.success(f"Real Job Posting")
+        st.success("Real Job Posting")
+
     else:
-        st.warning(f"Uncertain Prediction")
+        st.warning("Uncertain Prediction")
